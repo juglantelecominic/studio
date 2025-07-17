@@ -48,13 +48,13 @@ const HybridChallenges = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <h2 className="font-headline text-3xl md:text-4xl font-bold text-primary">
-              Challenges of the hybrid environment
+              Expert Guidance for the Hybrid Workplace
             </h2>
             <p className="text-lg text-foreground/80">
-              Many IT leaders are scrambling to support the evolving needs of hybrid workers, which takes them away from working on digital transformation efforts to streamline processes and improve efficiency.
+              In today's hybrid work landscape, businesses face unprecedented IT challenges. Our expert IT consultants help you navigate this complexity, ensuring your infrastructure is secure, scalable, and optimized for a distributed workforce.
             </p>
             <p className="text-lg text-foreground/80">
-              To help regain focus on strategic imperatives, many IT leaders are leveraging trusted suppliers to manage functional/operational workloads and free up their valuable IT resources.
+              We partner with you to identify gaps, implement robust solutions, and provide ongoing support. This frees up your internal teams to focus on strategic initiatives that drive business growth, rather than getting bogged down by operational hurdles.
             </p>
           </div>
           <div>
