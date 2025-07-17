@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     <section id="home" className="relative text-white">
       <Image
-        src="https://placehold.co/1920x1080.png"
+        src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080"
         alt="IT consultants collaborating"
         fill
         className="object-cover"

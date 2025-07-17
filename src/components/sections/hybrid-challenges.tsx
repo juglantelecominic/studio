@@ -59,7 +59,7 @@ const HybridChallenges = () => {
           </div>
           <div>
             <Image
-              src="https://placehold.co/600x400.png"
+              src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
               alt="IT leaders collaborating"
               width={600}
               height={400}

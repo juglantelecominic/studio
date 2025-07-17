@@ -7,7 +7,7 @@ const ModernIt = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <Image
-              src="https://placehold.co/600x400.png"
+              src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
               alt="Team discussing IT strategy"
               width={600}
               height={400}
