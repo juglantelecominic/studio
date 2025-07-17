@@ -1,6 +1,7 @@
 import Header from '@/components/layout/header';
 import Hero from '@/components/sections/hero';
 import Services from '@/components/sections/services';
+import HybridChallenges from '@/components/sections/hybrid-challenges';
 import CaseStudies from '@/components/sections/case-studies';
 import Insights from '@/components/sections/insights';
 import Contact from '@/components/sections/contact';
@@ -13,6 +14,7 @@ export default function Home() {
       <main className="flex-grow">
         <Hero />
         <Services />
+        <HybridChallenges />
         <CaseStudies />
         <Insights />
         <Contact />
