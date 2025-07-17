@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 const Hero = () => {
   return (
     <section id="home" className="relative text-white">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-purple-800 to-accent opacity-90"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-orange-600 to-accent opacity-90"></div>
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat [mask-image:linear-gradient(to_bottom,white_50%,transparent_100%)]"></div>
       
       <div className="relative container mx-auto px-4 flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] text-center py-20">
