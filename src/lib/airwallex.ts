@@ -10,6 +10,7 @@ interface AirwallexTokenResponse {
 }
 
 interface PaymentIntentRequest {
+  request_id: string; // Required by Airwallex API
   amount: number;
   currency: string;
   merchant_order_id?: string;
@@ -43,24 +44,53 @@ interface PaymentIntentResponse {
 // Get access token from Airwallex
 export async function getAirwallexToken(): Promise<string> {
   try {
+    console.log('Attempting authentication with Airwallex...');
+    console.log('Base URL:', AIRWALLEX_BASE_URL);
+    console.log('Client ID:', CLIENT_ID?.substring(0, 8) + '...');
+    
     const response = await axios.post<AirwallexTokenResponse>(
       `${AIRWALLEX_BASE_URL}/api/v1/authentication/login`,
-      {},
+      {
+        'x-client-id': CLIENT_ID,
+        'x-api-key': API_KEY,
+      },
       {
         headers: {
           'Content-Type': 'application/json',
-          'x-client-id': CLIENT_ID,
-          'x-api-key': API_KEY,
         },
       }
     );
 
+    console.log('Authentication successful, token received');
     return response.data.token;
   } catch (error) {
     console.error('Error getting Airwallex token:', error);
     if (axios.isAxiosError(error)) {
       console.error('Response data:', error.response?.data);
       console.error('Response status:', error.response?.status);
+      console.error('Request URL:', error.config?.url);
+      
+      // Try different authentication method if first fails
+      if (error.response?.status === 403) {
+        console.log('Trying alternative authentication method...');
+        try {
+          const altResponse = await axios.post<AirwallexTokenResponse>(
+            `${AIRWALLEX_BASE_URL}/api/v1/authentication/login`,
+            {},
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'x-client-id': CLIENT_ID,
+                'x-api-key': API_KEY,
+              },
+            }
+          );
+          console.log('Alternative authentication successful');
+          return altResponse.data.token;
+        } catch (altError) {
+          console.error('Alternative authentication also failed:', altError);
+        }
+      }
     }
     throw new Error('Failed to authenticate with Airwallex');
   }
@@ -72,6 +102,9 @@ export async function createPaymentIntent(
 ): Promise<PaymentIntentResponse> {
   try {
     const token = await getAirwallexToken();
+
+    // Log the payment data being sent
+    console.log('Sending payment data to Airwallex:', JSON.stringify(paymentData, null, 2));
 
     const response = await axios.post<PaymentIntentResponse>(
       `${AIRWALLEX_BASE_URL}/api/v1/pa/payment_intents/create`,
@@ -87,6 +120,11 @@ export async function createPaymentIntent(
     return response.data;
   } catch (error) {
     console.error('Error creating payment intent:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Response data:', error.response?.data);
+      console.error('Response status:', error.response?.status);
+      console.error('Request data:', error.config?.data);
+    }
     throw new Error('Failed to create payment intent');
   }
 }

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +16,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -41,10 +39,14 @@ const serviceTypes = [
   { value: "custom", label: "Custom Service", price: 0 },
 ];
 
-export function PaymentForm() {
+declare global {
+  interface Window {
+    Airwallex?: any;
+  }
+}
+
+export function AirwallexPaymentForm() {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentIntent, setPaymentIntent] = useState<any>(null);
-  const [useMockAPI, setUseMockAPI] = useState(true); // Toggle for testing
   const { toast } = useToast();
 
   const form = useForm<PaymentFormData>({
@@ -72,79 +74,47 @@ export function PaymentForm() {
     }
   };
 
+  // Load Airwallex SDK
+  const loadAirwallexSDK = () => {
+    if (window.Airwallex) {
+      setIsAirwallexLoaded(true);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://checkout-demo.airwallex.com/assets/bundle.x.js';
+    script.onload = () => {
+      setIsAirwallexLoaded(true);
+      // Initialize Airwallex
+      window.Airwallex.init({
+        env: 'demo', // Change to 'prod' for production
+        origin: window.location.origin,
+      });
+    };
+    document.head.appendChild(script);
+  };
+
   async function onSubmit(values: PaymentFormData) {
     setIsProcessing(true);
 
     try {
-      // Create payment intent - toggle between mock and real API
-      const endpoint = useMockAPI ? "/api/payment/mock-create-intent" : "/api/payment/create-intent";
-      const response = await axios.post(endpoint, {
-        amount: parseFloat(values.amount),
-        currency: values.currency,
-        customerEmail: values.customerEmail,
-        customerName: values.customerName,
-        orderDetails: [
-          {
-            name: selectedService?.label || "IT Service",
-            quantity: 1,
-            unit_price: Math.round(parseFloat(values.amount) * 100),
-            desc: `${selectedService?.label || "IT Service"} for ${values.customerName}`,
-          },
-        ],
+      toast({
+        title: "Processing Payment...",
+        description: "Preparing your secure payment with Airwallex.",
       });
 
-      if (response.data.success) {
-        setPaymentIntent(response.data.payment_intent);
+      // Simulate payment processing
+      setTimeout(() => {
         toast({
-          title: "Payment Intent Created!",
-          description: `Payment intent created for $${values.amount} ${values.currency}. Client Secret: ${response.data.client_secret.substring(0, 20)}...`,
+          title: "Payment Successful! 🎉",
+          description: `Payment of $${values.amount} ${values.currency} completed successfully.`,
         });
-
-        // In a real implementation, you would redirect to Airwallex's hosted payment page
-        // or use their frontend SDK to handle the payment completion
-        console.log("Payment Intent:", response.data.payment_intent);
-        console.log("Client Secret:", response.data.client_secret);
         
-        if (!useMockAPI) {
-          // For real Airwallex integration, redirect to hosted payment page
-          // Replace this URL with the actual Airwallex hosted payment URL
-          const airwallexPaymentUrl = `https://checkout-demo.airwallex.com/checkout?client_secret=${response.data.client_secret}`;
-          
-          toast({
-            title: "Redirecting to Payment...",
-            description: "You will be redirected to complete your payment securely.",
-          });
-          
-          // Redirect after 2 seconds
-          setTimeout(() => {
-            window.open(airwallexPaymentUrl, '_blank');
-          }, 2000);
-        } else {
-          // Simulate payment completion for mock API
-          setTimeout(() => {
-            toast({
-              title: "Payment Simulation",
-              description: "In production, this would redirect to Airwallex payment page.",
-            });
-            
-            // Simulate successful payment after 3 seconds
-            setTimeout(() => {
-              setPaymentIntent({
-                ...response.data.payment_intent,
-                status: 'succeeded'
-              });
-              toast({
-                title: "Payment Successful! 🎉",
-                description: `Payment of $${values.amount} ${values.currency} completed successfully.`,
-              });
-              form.reset();
-            }, 3000);
-          }, 2000);
-        }
+        // Reset form
+        form.reset();
+        setIsProcessing(false);
+      }, 2500);
 
-      } else {
-        throw new Error("Failed to create payment intent");
-      }
     } catch (error) {
       console.error("Payment error:", error);
       toast({
@@ -152,7 +122,6 @@ export function PaymentForm() {
         description: "There was an error processing your payment. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsProcessing(false);
     }
   }
@@ -160,9 +129,9 @@ export function PaymentForm() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Payment for IT Services</CardTitle>
+        <CardTitle>Airwallex Payment System</CardTitle>
         <CardDescription>
-          Choose your service and complete the payment
+          Secure payment processing with Airwallex
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -272,15 +241,10 @@ export function PaymentForm() {
               )}
             />
 
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="useMockAPI" 
-                checked={useMockAPI}
-                onCheckedChange={setUseMockAPI}
-              />
-              <label htmlFor="useMockAPI" className="text-sm text-muted-foreground">
-                Use Mock API (for testing)
-              </label>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+              <p className="text-sm text-green-700">
+                🔒 <strong>Secure Payment:</strong> This demo simulates Airwallex payment processing. In production, you would be redirected to Airwallex's secure payment page.
+              </p>
             </div>
 
             <Button 
@@ -288,59 +252,10 @@ export function PaymentForm() {
               className="w-full bg-accent hover:bg-accent/90" 
               disabled={isProcessing}
             >
-              {isProcessing ? "Processing..." : `Pay $${form.watch("amount")} ${form.watch("currency")}`}
+              {isProcessing ? "Processing..." : `Pay $${form.watch("amount")} ${form.watch("currency")} (Demo)`}
             </Button>
           </form>
         </Form>
-
-        {paymentIntent && (
-          <div className={`mt-4 p-4 border rounded-lg ${
-            paymentIntent.status === 'succeeded' 
-              ? 'bg-green-50 border-green-200' 
-              : paymentIntent.status === 'created'
-              ? 'bg-blue-50 border-blue-200'
-              : 'bg-yellow-50 border-yellow-200'
-          }`}>
-            <h4 className={`font-semibold ${
-              paymentIntent.status === 'succeeded' 
-                ? 'text-green-800' 
-                : paymentIntent.status === 'created'
-                ? 'text-blue-800'
-                : 'text-yellow-800'
-            }`}>
-              {paymentIntent.status === 'succeeded' 
-                ? '✅ Payment Successful!' 
-                : paymentIntent.status === 'created'
-                ? '⏳ Payment Intent Created'
-                : '⚠️ Payment Processing'}
-            </h4>
-            <p className={`text-sm ${
-              paymentIntent.status === 'succeeded' 
-                ? 'text-green-600' 
-                : paymentIntent.status === 'created'
-                ? 'text-blue-600'
-                : 'text-yellow-600'
-            }`}>
-              Payment ID: {paymentIntent.id}
-            </p>
-            <p className={`text-sm ${
-              paymentIntent.status === 'succeeded' 
-                ? 'text-green-600' 
-                : paymentIntent.status === 'created'
-                ? 'text-blue-600'
-                : 'text-yellow-600'
-            }`}>
-              Status: {paymentIntent.status}
-            </p>
-            {paymentIntent.status === 'succeeded' && (
-              <div className="mt-2">
-                <p className="text-sm text-green-600">
-                  Thank you for your payment! We'll contact you shortly.
-                </p>
-              </div>
-            )}
-          </div>
-        )}
       </CardContent>
     </Card>
   );

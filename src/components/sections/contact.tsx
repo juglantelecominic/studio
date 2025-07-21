@@ -1,6 +1,6 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "./contact-form";
-import { PaymentForm } from "./payment-form";
+import { AirwallexPaymentForm } from "./airwallex-payment";
 
 const Contact = () => {
   return (
@@ -18,8 +18,8 @@ const Contact = () => {
             <ContactForm />
           </div>
           <div className="bg-card p-8 rounded-lg shadow-lg">
-            <h3 className="font-headline text-2xl font-semibold mb-6">Quick Payment</h3>
-            <PaymentForm />
+            <h3 className="font-headline text-2xl font-semibold mb-6">Airwallex Payment</h3>
+            <AirwallexPaymentForm />
           </div>
           <div className="space-y-8">
             <h3 className="font-headline text-2xl font-semibold">Contact Information</h3>

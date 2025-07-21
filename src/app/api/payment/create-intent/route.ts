@@ -29,24 +29,15 @@ export async function POST(request: NextRequest) {
 
     // Create payment intent with Airwallex
     const paymentIntent = await createPaymentIntent({
+      request_id: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, // Required field
       amount: Math.round(amount * 100), // Convert to cents
       currency: currency.toUpperCase(),
       merchant_order_id: `order_${Date.now()}`,
-      customer: {
+      customer: customerEmail ? {
         email: customerEmail,
-        first_name: customerName?.split(' ')[0],
-        last_name: customerName?.split(' ').slice(1).join(' '),
-      },
-      order: {
-        products: orderDetails || [
-          {
-            name: 'IT Consulting Service',
-            quantity: 1,
-            unit_price: Math.round(amount * 100),
-            desc: 'Professional IT consulting services',
-          },
-        ],
-      },
+        first_name: customerName?.split(' ')[0] || 'Customer',
+        last_name: customerName?.split(' ').slice(1).join(' ') || 'Name',
+      } : undefined,
     });
 
     return NextResponse.json({
