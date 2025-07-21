@@ -1,5 +1,6 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "./contact-form";
+import { PaymentForm } from "./payment-form";
 
 const Contact = () => {
   return (
@@ -11,10 +12,14 @@ const Contact = () => {
             Have a project in mind or just want to say hello? We'd love to hear from you.
           </p>
         </div>
-        <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
           <div className="bg-card p-8 rounded-lg shadow-lg">
             <h3 className="font-headline text-2xl font-semibold mb-6">Send us a Message</h3>
             <ContactForm />
+          </div>
+          <div className="bg-card p-8 rounded-lg shadow-lg">
+            <h3 className="font-headline text-2xl font-semibold mb-6">Quick Payment</h3>
+            <PaymentForm />
           </div>
           <div className="space-y-8">
             <h3 className="font-headline text-2xl font-semibold">Contact Information</h3>
