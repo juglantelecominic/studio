@@ -44,7 +44,7 @@ const serviceTypes = [
 export function PaymentForm() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentIntent, setPaymentIntent] = useState<any>(null);
-  const [useMockAPI, setUseMockAPI] = useState(true); // Toggle for testing
+  const [useMockAPI, setUseMockAPI] = useState(false); // Changed to false for real API by default
   const { toast } = useToast();
 
   const form = useForm<PaymentFormData>({
@@ -276,11 +276,17 @@ export function PaymentForm() {
               <Checkbox 
                 id="useMockAPI" 
                 checked={useMockAPI}
-                onCheckedChange={setUseMockAPI}
+                onCheckedChange={(checked) => setUseMockAPI(checked === true)}
               />
               <label htmlFor="useMockAPI" className="text-sm text-muted-foreground">
-                Use Mock API (for testing)
+                Use Mock API (demo mode - no real payment)
               </label>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-yellow-800">
+                💡 <strong>Mock API:</strong> {useMockAPI ? 'ON - Payment will be simulated only' : 'OFF - Real Airwallex API will be used'}
+              </p>
             </div>
 
             <Button 

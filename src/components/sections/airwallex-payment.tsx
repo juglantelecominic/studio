@@ -39,12 +39,6 @@ const serviceTypes = [
   { value: "custom", label: "Custom Service", price: 0 },
 ];
 
-declare global {
-  interface Window {
-    Airwallex?: any;
-  }
-}
-
 export function AirwallexPaymentForm() {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
@@ -72,26 +66,6 @@ export function AirwallexPaymentForm() {
     } else if (service?.value === "custom") {
       form.setValue("amount", "");
     }
-  };
-
-  // Load Airwallex SDK
-  const loadAirwallexSDK = () => {
-    if (window.Airwallex) {
-      setIsAirwallexLoaded(true);
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://checkout-demo.airwallex.com/assets/bundle.x.js';
-    script.onload = () => {
-      setIsAirwallexLoaded(true);
-      // Initialize Airwallex
-      window.Airwallex.init({
-        env: 'demo', // Change to 'prod' for production
-        origin: window.location.origin,
-      });
-    };
-    document.head.appendChild(script);
   };
 
   async function onSubmit(values: PaymentFormData) {
