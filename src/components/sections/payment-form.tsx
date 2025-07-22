@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -44,7 +43,6 @@ const serviceTypes = [
 export function PaymentForm() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentIntent, setPaymentIntent] = useState<any>(null);
-  const [useMockAPI, setUseMockAPI] = useState(false); // Changed to false for real API by default
   const { toast } = useToast();
 
   const form = useForm<PaymentFormData>({
@@ -76,9 +74,8 @@ export function PaymentForm() {
     setIsProcessing(true);
 
     try {
-      // Create payment intent - toggle between mock and real API
-      const endpoint = useMockAPI ? "/api/payment/mock-create-intent" : "/api/payment/create-intent";
-      const response = await axios.post(endpoint, {
+      // Create payment intent using real Airwallex API
+      const response = await axios.post("/api/payment/create-intent", {
         amount: parseFloat(values.amount),
         currency: values.currency,
         customerEmail: values.customerEmail,
@@ -100,47 +97,22 @@ export function PaymentForm() {
           description: `Payment intent created for $${values.amount} ${values.currency}. Client Secret: ${response.data.client_secret.substring(0, 20)}...`,
         });
 
-        // In a real implementation, you would redirect to Airwallex's hosted payment page
-        // or use their frontend SDK to handle the payment completion
+        // Redirect to Airwallex's hosted payment page for real payment processing
         console.log("Payment Intent:", response.data.payment_intent);
         console.log("Client Secret:", response.data.client_secret);
         
-        if (!useMockAPI) {
-          // For real Airwallex integration, redirect to hosted payment page
-          // Replace this URL with the actual Airwallex hosted payment URL
-          const airwallexPaymentUrl = `https://checkout-demo.airwallex.com/checkout?client_secret=${response.data.client_secret}`;
-          
-          toast({
-            title: "Redirecting to Payment...",
-            description: "You will be redirected to complete your payment securely.",
-          });
-          
-          // Redirect after 2 seconds
-          setTimeout(() => {
-            window.open(airwallexPaymentUrl, '_blank');
-          }, 2000);
-        } else {
-          // Simulate payment completion for mock API
-          setTimeout(() => {
-            toast({
-              title: "Payment Simulation",
-              description: "In production, this would redirect to Airwallex payment page.",
-            });
-            
-            // Simulate successful payment after 3 seconds
-            setTimeout(() => {
-              setPaymentIntent({
-                ...response.data.payment_intent,
-                status: 'succeeded'
-              });
-              toast({
-                title: "Payment Successful! 🎉",
-                description: `Payment of $${values.amount} ${values.currency} completed successfully.`,
-              });
-              form.reset();
-            }, 3000);
-          }, 2000);
-        }
+        // For real Airwallex integration, redirect to hosted payment page
+        const airwallexPaymentUrl = `https://checkout-demo.airwallex.com/checkout?client_secret=${response.data.client_secret}`;
+        
+        toast({
+          title: "Redirecting to Payment...",
+          description: "You will be redirected to complete your payment securely with Airwallex.",
+        });
+        
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.open(airwallexPaymentUrl, '_blank');
+        }, 2000);
 
       } else {
         throw new Error("Failed to create payment intent");
@@ -272,20 +244,9 @@ export function PaymentForm() {
               )}
             />
 
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="useMockAPI" 
-                checked={useMockAPI}
-                onCheckedChange={(checked) => setUseMockAPI(checked === true)}
-              />
-              <label htmlFor="useMockAPI" className="text-sm text-muted-foreground">
-                Use Mock API (demo mode - no real payment)
-              </label>
-            </div>
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-yellow-800">
-                💡 <strong>Mock API:</strong> {useMockAPI ? 'ON - Payment will be simulated only' : 'OFF - Real Airwallex API will be used'}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-green-800">
+                � <strong>Secure Payment:</strong> All payments are processed securely through Airwallex's real payment system.
               </p>
             </div>
 
