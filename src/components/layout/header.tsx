@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const navItems = [
   { label: 'Services', href: '#services' },
-  { label: 'Shop', href: '/shop' },
+  { label: 'Shop', href: '/shop', highlight: true, icon: ShoppingBag }, // Make shop prominent with icon
   { label: 'Case Studies', href: '#case-studies' },
   { label: 'Insights', href: '#insights' },
   { label: 'Contact', href: '#contact' },
@@ -27,25 +27,36 @@ const Header = () => {
         </Link>
 
         <nav className="hidden md:flex md:items-center md:space-x-6">
-          {navItems.map((item) => (
-            item.href.startsWith('#') ? (
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return item.href.startsWith('#') ? (
               <a
                 key={item.href}
                 href={item.href}
-                className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
+                className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
+                  item.highlight 
+                    ? 'text-primary font-semibold bg-primary/10 px-3 py-1 rounded-md' 
+                    : 'text-foreground/80'
+                }`}
               >
+                {Icon && <Icon className="w-4 h-4" />}
                 {item.label}
               </a>
             ) : (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
+                className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
+                  item.highlight 
+                    ? 'text-primary font-semibold bg-primary/10 px-3 py-1 rounded-md' 
+                    : 'text-foreground/80'
+                }`}
               >
+                {Icon && <Icon className="w-4 h-4" />}
                 {item.label}
               </Link>
-            )
-          ))}
+            );
+          })}
         </nav>
 
         <div className="hidden md:flex items-center space-x-2">
@@ -76,14 +87,18 @@ const Header = () => {
                   </Button>
                 </div>
               
-                {navItems.map((item) => (
-                  item.href.startsWith('#') ? (
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return item.href.startsWith('#') ? (
                     <a
                       key={item.href}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="block rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-secondary"
+                      className={`block rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-secondary flex items-center gap-2 ${
+                        item.highlight ? 'bg-primary/10 font-semibold text-primary' : ''
+                      }`}
                     >
+                      {Icon && <Icon className="w-4 h-4" />}
                       {item.label}
                     </a>
                   ) : (
@@ -91,12 +106,15 @@ const Header = () => {
                       key={item.href}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="block rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-secondary"
+                      className={`block rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-secondary flex items-center gap-2 ${
+                        item.highlight ? 'bg-primary/10 font-semibold text-primary' : ''
+                      }`}
                     >
+                      {Icon && <Icon className="w-4 h-4" />}
                       {item.label}
                     </Link>
-                  )
-                ))}
+                  );
+                })}
                 <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90" onClick={() => setIsOpen(false)}>
                   <a href="#contact">Get a Quote</a>
                 </Button>
