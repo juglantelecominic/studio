@@ -2,8 +2,8 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  // output: 'export', // Commented out for API routes
-  // trailingSlash: true, // Commented out for API routes
+  output: 'export', // Enable static export for GitHub Pages
+  trailingSlash: true, // Enable for better static hosting
   typescript: {
     ignoreBuildErrors: true,
   },
