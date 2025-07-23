@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const navItems = [
   { label: 'Services', href: '#services' },
+  { label: 'Shop', href: '/shop' },
   { label: 'Case Studies', href: '#case-studies' },
   { label: 'Insights', href: '#insights' },
   { label: 'Contact', href: '#contact' },
@@ -27,13 +28,23 @@ const Header = () => {
 
         <nav className="hidden md:flex md:items-center md:space-x-6">
           {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
-            >
-              {item.label}
-            </a>
+            item.href.startsWith('#') ? (
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
+              >
+                {item.label}
+              </a>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
+              >
+                {item.label}
+              </Link>
+            )
           ))}
         </nav>
 
@@ -66,14 +77,25 @@ const Header = () => {
                 </div>
               
                 {navItems.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className="block rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-secondary"
-                  >
-                    {item.label}
-                  </a>
+                  item.href.startsWith('#') ? (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="block rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-secondary"
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="block rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-secondary"
+                    >
+                      {item.label}
+                    </Link>
+                  )
                 ))}
                 <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90" onClick={() => setIsOpen(false)}>
                   <a href="#contact">Get a Quote</a>
