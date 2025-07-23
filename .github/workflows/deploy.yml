@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Build application
-        run: npm run build
+        run: BUILD_TYPE=static npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
